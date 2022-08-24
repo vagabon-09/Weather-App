@@ -17,6 +17,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.aniketjain.weatherapp.Animation.Animation;
 import com.aniketjain.weatherapp.R;
 import com.aniketjain.weatherapp.update.UpdateUI;
 import com.aniketjain.weatherapp.url.URL;
@@ -48,7 +49,9 @@ public class DaysAdapter extends RecyclerView.Adapter<DaysAdapter.DayViewHolder>
 
     @Override
     public void onBindViewHolder(@NonNull DayViewHolder holder, int position) {
+        Animation anim = new Animation();
         getDailyWeatherInfo(position + 1, holder);
+        anim.setAnimation(context.getApplicationContext(),holder.itemView,position);
     }
 
     @Override
