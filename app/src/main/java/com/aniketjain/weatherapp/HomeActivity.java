@@ -60,7 +60,7 @@ public class HomeActivity extends AppCompatActivity {
     private int condition;
     private long update_time, sunset, sunrise;
     private String city = "";
-    private int REQUEST_CODE_EXTRA_INPUT = 101;
+    private final int REQUEST_CODE_EXTRA_INPUT = 101;
     private ActivityHomeBinding binding;
 
     @Override
@@ -87,24 +87,6 @@ public class HomeActivity extends AppCompatActivity {
         // getting data using internet connection
         getDataUsingNetwork();
 
-        //Mic Search
-        binding.layout.micSearchId.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, Locale.getDefault());
-                intent.putExtra(RecognizerIntent.EXTRA_PROMPT,REQUEST_CODE_EXTRA_INPUT);
-                try {
-                    //it was deprecated but still work
-                    startActivityForResult(intent,REQUEST_CODE_EXTRA_INPUT);
-
-                }catch (Exception e){
-                    Log.d("Error Voice", "Mic Error:  "+e);
-                }
-            }
-        });
-
     }
 
 
@@ -114,8 +96,8 @@ public class HomeActivity extends AppCompatActivity {
         if (requestCode == REQUEST_CODE_EXTRA_INPUT){
             if(resultCode == RESULT_OK && data!=null){
                 ArrayList<String> arrayList = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-                binding.layout.cityEt.setText(Objects.requireNonNull(arrayList).get(0));
-
+                binding.layout.cityEt.setText(Objects.requireNonNull(arrayList).get(0).toUpperCase());
+                searchCity(binding.layout.cityEt.getText().toString());
             }
         }
     }
@@ -163,6 +145,22 @@ public class HomeActivity extends AppCompatActivity {
             checkConnection();
             Log.i("refresh", "Refresh Done.");
             binding.mainRefreshLayout.setRefreshing(false);  //for the next time
+        });
+        //Mic Search
+        binding.layout.micSearchId.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, Locale.getDefault());
+                intent.putExtra(RecognizerIntent.EXTRA_PROMPT,REQUEST_CODE_EXTRA_INPUT);
+                try {
+                    //it was deprecated but still work
+                    startActivityForResult(intent,REQUEST_CODE_EXTRA_INPUT);
+                }catch (Exception e){
+                    Log.d("Error Voice", "Mic Error:  "+e);
+                }
+            }
         });
     }
 
@@ -251,6 +249,7 @@ public class HomeActivity extends AppCompatActivity {
     @SuppressLint("SetTextI18n")
     private void updateUI() {
         binding.layout.nameTv.setText(name);
+        updated_at = translate(updated_at);
         binding.layout.updatedAtTv.setText(updated_at);
         binding.layout.conditionIv.setImageResource(
                 getResources().getIdentifier(
@@ -265,6 +264,12 @@ public class HomeActivity extends AppCompatActivity {
         binding.layout.pressureTv.setText(pressure + " mb");
         binding.layout.windTv.setText(wind_speed + " km/h");
         binding.layout.humidityTv.setText(humidity + "%");
+    }
+
+    private String translate(String dayToTranslate) {
+        String[] dayToTranslateSplit = dayToTranslate.split(" ");
+        dayToTranslateSplit[0] = UpdateUI.TranslateDay(dayToTranslateSplit[0].trim(), getApplicationContext());
+        return dayToTranslateSplit[0].concat(" " + dayToTranslateSplit[1]);
     }
 
     private void hideProgressBar() {

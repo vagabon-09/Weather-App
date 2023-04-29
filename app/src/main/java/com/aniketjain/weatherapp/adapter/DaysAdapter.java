@@ -87,7 +87,8 @@ public class DaysAdapter extends RecyclerView.Adapter<DaysAdapter.DayViewHolder>
 
     @SuppressLint("SetTextI18n")
     private void updateUI(DayViewHolder holder) {
-        holder.dTime.setText(updated_at);
+        String day = UpdateUI.TranslateDay(updated_at, context);
+        holder.dTime.setText(day);
         holder.temp_min.setText(min + "°C");
         holder.temp_max.setText(max + "°C");
         holder.pressure.setText(pressure + " mb");
@@ -115,7 +116,7 @@ public class DaysAdapter extends RecyclerView.Adapter<DaysAdapter.DayViewHolder>
         public DayViewHolder(@NonNull View itemView) {
             super(itemView);
             progress = itemView.findViewById(R.id.day_progress_bar);
-            layout = itemView.findViewById(R.id.day_rl);
+            layout = itemView.findViewById(R.id.day_relative_layout);
             dTime = itemView.findViewById(R.id.day_time);
             temp_min = itemView.findViewById(R.id.day_min_temp);
             temp_max = itemView.findViewById(R.id.day_max_temp);
@@ -125,5 +126,4 @@ public class DaysAdapter extends RecyclerView.Adapter<DaysAdapter.DayViewHolder>
             icon = itemView.findViewById(R.id.day_icon);
         }
     }
-
 }
